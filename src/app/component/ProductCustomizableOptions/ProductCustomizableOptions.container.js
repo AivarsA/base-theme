@@ -194,13 +194,18 @@ class ProductCustomizableOptionsContainer extends PureComponent {
     }
 
     async setSelectedFileValues(filesData, option) {
+        const { files } = this.state;
         const { option_id } = option;
         const selectedFiles = await encodeFormFiles(filesData);
-        const files = [];
+        const filesArray = [];
 
-        files.push({ option_id, files_data: selectedFiles });
+        if (!selectedFiles.length) {
+            return this.setState({ files: files.filter(value => value.option_id !== option_id) });
+        }
 
-        return this.setState({ files });
+        filesArray.push({ option_id, files_data: selectedFiles });
+
+        return this.setState({ files: filesArray });
     }
 
     render() {
