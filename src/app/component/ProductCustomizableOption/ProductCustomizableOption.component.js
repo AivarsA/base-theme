@@ -13,6 +13,7 @@ import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import ExpandableContent from 'Component/ExpandableContent';
 import Field from 'Component/Field';
+import { attachmentIcon } from './ProductCustomizableOption.config';
 
 class ProductCustomizableOptions extends PureComponent {
     static propTypes = {
@@ -25,7 +26,14 @@ class ProductCustomizableOptions extends PureComponent {
         setDropdownValue: PropTypes.func.isRequired,
         selectedDropdownValue: PropTypes.number.isRequired,
         optionType: PropTypes.string.isRequired,
-        getDropdownOptions: PropTypes.func.isRequired
+        getDropdownOptions: PropTypes.func.isRequired,
+        fileFormRef: PropTypes.oneOfType([
+            PropTypes.func,
+            PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+        ]).isRequired,
+        handleAttachFile: PropTypes.func.isRequired,
+        handleRemoveFile: PropTypes.func.isRequired,
+        files: PropTypes.array.isRequired
     };
 
     renderRequired() {
@@ -192,6 +200,91 @@ class ProductCustomizableOptions extends PureComponent {
         );
     }
 
+    renderAttachment = (name, index) => {
+        const { handleRemoveFile } = this.props;
+
+        return (
+            <div key={ index }>
+                <span
+                  block="MyAccountReturnDetailsChat"
+                  elem="AttachmentName"
+                >
+                    { name }
+                </span>
+                <button
+                  block="MyAccountOverlay"
+                  elem="CloseButton"
+                  onClick={ () => handleRemoveFile(name) }
+                />
+            </div>
+        );
+    };
+
+    renderAttachments() {
+        const { files } = this.props;
+
+        if (!files.length) {
+            return null;
+        }
+
+        return (
+            <div
+              block="MyAccountReturnDetailsChat"
+              elem="AttachmentWrapper"
+            >
+                { attachmentIcon }
+                <div
+                  block="MyAccountReturnDetailsChat"
+                  elem="Attachment"
+                >
+                    { files.map((file, index) => this.renderAttachment(file.name, index)) }
+                </div>
+            </div>
+        );
+    }
+
+    renderFile() {
+        const {
+            option,
+            renderOptionLabel,
+            getHeading,
+            handleAttachFile,
+            fileFormRef
+        } = this.props;
+        const {
+            title,
+            option_id,
+            required,
+            fileValues
+        } = option;
+        const { price_type, price } = fileValues;
+        const priceLabel = renderOptionLabel(price_type, price);
+
+        return (
+            <ExpandableContent
+              heading={ getHeading(title, priceLabel) }
+              mix={ { block: 'ProductCustomizableOptions', elem: 'Content' } }
+              key={ option_id }
+            >
+                <input
+                  type="file"
+                  accept=".pdf,.png,.jpg,.jpeg,.gif"
+                  multiple
+                  block="ProductCustomizableOptions"
+                  onChange={ handleAttachFile }
+                  ref={ fileFormRef }
+                />
+                <div
+                  block="ProductCustomizableOptions"
+                  elem="FileAttach"
+                >
+                    { required ? this.renderRequired() : null }
+                    { this.renderAttachments() }
+                </div>
+            </ExpandableContent>
+        );
+    }
+
     renderContent() {
         const { optionType } = this.props;
 
@@ -204,6 +297,8 @@ class ProductCustomizableOptions extends PureComponent {
             return this.renderField();
         case 'area':
             return this.renderArea();
+        case 'file':
+            return this.renderFile();
         default:
             return null;
         }

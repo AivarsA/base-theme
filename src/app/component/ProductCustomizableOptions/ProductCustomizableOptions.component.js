@@ -20,7 +20,8 @@ class ProductCustomizableOptions extends PureComponent {
         options: PropTypes.array,
         setSelectedDropdownValue: PropTypes.func.isRequired,
         setSelectedCheckboxValues: PropTypes.func.isRequired,
-        setCustomizableOptionTextFieldValue: PropTypes.func.isRequired
+        setCustomizableOptionTextFieldValue: PropTypes.func.isRequired,
+        setSelectedFileValues: PropTypes.func.isRequired
     };
 
     static defaultProps = {
@@ -32,7 +33,8 @@ class ProductCustomizableOptions extends PureComponent {
             options,
             setSelectedCheckboxValues,
             setCustomizableOptionTextFieldValue,
-            setSelectedDropdownValue
+            setSelectedDropdownValue,
+            setSelectedFileValues
         } = this.props;
 
         return options.map((option, key) => (
@@ -43,6 +45,7 @@ class ProductCustomizableOptions extends PureComponent {
               setSelectedCheckboxValues={ setSelectedCheckboxValues }
               setCustomizableOptionTextFieldValue={ setCustomizableOptionTextFieldValue }
               setSelectedDropdownValue={ setSelectedDropdownValue }
+              setSelectedFileValues={ setSelectedFileValues }
             />
         ));
     }

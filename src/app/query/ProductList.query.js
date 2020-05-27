@@ -551,6 +551,35 @@ export class ProductListQuery {
         ];
     }
 
+    _getCustomizableFileValueFields() {
+        return [
+            'price',
+            'price_type',
+            'sku',
+            'file_extension',
+            'image_size_x',
+            'image_size_y'
+        ];
+    }
+
+    _getCustomizableFileValueField() {
+        return new Field('value')
+            .addFieldList(this._getCustomizableFileValueFields())
+            .setAlias('fileValues');
+    }
+
+    _getCustomizableFileFields() {
+        return [
+            this._getCustomizableFileValueField(),
+            'product_sku'
+        ];
+    }
+
+    _getCustomizableFileOption() {
+        return new Fragment('CustomizableFileOption')
+            .addFieldList(this._getCustomizableFileFields());
+    }
+
     _getCustomizableTextValueFields() {
         return [
             'price',
@@ -616,6 +645,7 @@ export class ProductListQuery {
             this._getCustomizableCheckboxOption(),
             this._getCustomizableFieldOption(),
             this._getCustomizableAreaOption(),
+            this._getCustomizableFileOption(),
             'title',
             'required',
             'sort_order',

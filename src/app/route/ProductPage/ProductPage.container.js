@@ -204,13 +204,18 @@ export class ProductPageContainer extends PureComponent {
         });
     }
 
-    getSelectedCustomizableOptions(values, updateArray = false) {
+    getSelectedCustomizableOptions(values, updateArray = false, isFiles = false) {
         const { customizableOptionsData } = this.state;
 
         if (updateArray) {
             this.setState({
                 customizableOptionsData:
                     { ...customizableOptionsData, customizableOptionsMulti: values }
+            });
+        } else if (isFiles) {
+            this.setState({
+                customizableOptionsData:
+                    { ...customizableOptionsData, customizableOptionsFiles: values }
             });
         } else {
             this.setState({

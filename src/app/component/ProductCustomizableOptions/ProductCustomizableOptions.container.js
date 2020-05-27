@@ -14,6 +14,25 @@ import PropTypes from 'prop-types';
 import { OptionsType } from 'Type/ProductList';
 import ProductCustomizableOptions from './ProductCustomizableOptions.component';
 
+export const fileToBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = error => reject(error);
+});
+
+export const encodeFormFiles = async filesFromForm => Object.values(filesFromForm).reduce(
+    async (previousPromise, file) => {
+        const acc = await previousPromise;
+        acc.push({
+            name: file.name,
+            encoded_file: await fileToBase64(file)
+        });
+
+        return acc;
+    }, Promise.resolve([])
+);
+
 class ProductCustomizableOptionsContainer extends PureComponent {
     static propTypes = {
         options: OptionsType,
@@ -28,13 +47,15 @@ class ProductCustomizableOptionsContainer extends PureComponent {
         isLoading: true,
         selectedCheckboxValues: [],
         selectedDropdownOptions: [],
-        textFieldValues: []
+        textFieldValues: [],
+        files: []
     };
 
     containerFunctions = {
         setSelectedDropdownValue: this.setSelectedDropdownValue.bind(this),
         setSelectedCheckboxValues: this.setSelectedCheckboxValues.bind(this),
-        setCustomizableOptionTextFieldValue: this.setCustomizableOptionTextFieldValue.bind(this)
+        setCustomizableOptionTextFieldValue: this.setCustomizableOptionTextFieldValue.bind(this),
+        setSelectedFileValues: this.setSelectedFileValues.bind(this)
     };
 
     componentDidMount() {
@@ -51,12 +72,14 @@ class ProductCustomizableOptionsContainer extends PureComponent {
             selectedCheckboxValues,
             selectedDropdownOptions,
             textFieldValues,
+            files,
             isLoading
         } = this.state;
         const {
             selectedCheckboxValues: prevSelectedCheckboxValues,
             selectedDropdownOptions: prevSelectedDropdownOptions,
-            textFieldValues: prevTextFieldValues
+            textFieldValues: prevTextFieldValues,
+            files: prevFiles
         } = prevState;
 
         if (options && isLoading) {
@@ -71,6 +94,10 @@ class ProductCustomizableOptionsContainer extends PureComponent {
             || selectedDropdownOptions !== prevSelectedDropdownOptions
         ) {
             this.updateSelectedOptions();
+        }
+
+        if (files !== prevFiles) {
+            this.updateSelectedFiles();
         }
     }
 
@@ -102,6 +129,13 @@ class ProductCustomizableOptionsContainer extends PureComponent {
         );
 
         getSelectedCustomizableOptions(customizableOptions);
+    }
+
+    updateSelectedFiles() {
+        const { getSelectedCustomizableOptions } = this.props;
+        const { files } = this.state;
+
+        getSelectedCustomizableOptions(files, false, true);
     }
 
     setCustomizableOptionTextFieldValue(option_id, option_value) {
@@ -157,6 +191,16 @@ class ProductCustomizableOptionsContainer extends PureComponent {
         return this.setState({
             selectedCheckboxValues: [...selectedCheckboxValues, selectedValue]
         });
+    }
+
+    async setSelectedFileValues(filesData, option) {
+        const { option_id } = option;
+        const selectedFiles = await encodeFormFiles(filesData);
+        const files = [];
+
+        files.push({ option_id, files_data: selectedFiles });
+
+        return this.setState({ files });
     }
 
     render() {

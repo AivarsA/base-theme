@@ -9,7 +9,7 @@
  * @link https://github.com/scandipwa/base-theme
  */
 
-import { PureComponent } from 'react';
+import { createRef, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { formatCurrency } from 'Util/Price';
 import ProductCustomizableOption from './ProductCustomizableOption.component';
@@ -19,12 +19,14 @@ class ProductCustomizableOptionContainer extends PureComponent {
         option: PropTypes.object.isRequired,
         setSelectedCheckboxValues: PropTypes.func.isRequired,
         setCustomizableOptionTextFieldValue: PropTypes.func.isRequired,
-        setSelectedDropdownValue: PropTypes.func.isRequired
+        setSelectedDropdownValue: PropTypes.func.isRequired,
+        setSelectedFileValues: PropTypes.func.isRequired
     };
 
     state = {
         textValue: '',
-        selectedDropdownValue: 0
+        selectedDropdownValue: 0,
+        files: []
     };
 
     containerFunctions = {
@@ -33,11 +35,20 @@ class ProductCustomizableOptionContainer extends PureComponent {
         updateTextFieldValue: this.updateTextFieldValue.bind(this),
         setDropdownValue: this.setDropdownValue.bind(this),
         renderOptionLabel: this.renderOptionLabel.bind(this),
-        getHeading: this.getHeading.bind(this)
+        getHeading: this.getHeading.bind(this),
+        handleAttachFile: this.onFileAttach.bind(this),
+        handleRemoveFile: this.handleRemoveFile.bind(this)
     };
 
+    constructor(props) {
+        super(props);
+
+        this.fileFormRef = createRef();
+    }
+
     containerProps = () => ({
-        optionType: this.getOptionType()
+        optionType: this.getOptionType(),
+        fileFormRef: this.fileFormRef
     });
 
 
@@ -47,7 +58,8 @@ class ProductCustomizableOptionContainer extends PureComponent {
             checkboxValues,
             dropdownValues,
             fieldValues,
-            areaValues
+            areaValues,
+            fileValues
         } = option;
 
         if (checkboxValues) {
@@ -58,6 +70,8 @@ class ProductCustomizableOptionContainer extends PureComponent {
             return 'field';
         } if (areaValues) {
             return 'area';
+        } if (fileValues) {
+            return 'file';
         }
 
         return null;
@@ -132,6 +146,56 @@ class ProductCustomizableOptionContainer extends PureComponent {
 
             return acc;
         }, []);
+    }
+
+    onFileAttach() {
+        const { files } = this.state;
+        const filesFromForm = this.fileFormRef.current.files || [];
+        // const { max_file_size, setSelectedFileValues } = this.props;
+        const { setSelectedFileValues, option } = this.props;
+        const oldFiles = [].concat(files);
+
+        const newFiles = Object.values(filesFromForm).reduce(
+            /** @param acc
+             * @param {File} file */
+            (acc, file) => {
+                // Handle file size more than max allowed
+                // But first transform from b to Kb
+                // if (file.size / 1024 > max_file_size) {
+                //     showNotification('error', __(
+                //         'File %s has exceeded the maximum file size limit of %s KB',
+                //         file.name,
+                //         max_file_size
+                //     ));
+                //
+                //     return acc;
+                // }
+
+                acc.push(file);
+                return acc;
+            }, oldFiles
+        );
+
+        setSelectedFileValues(newFiles, option);
+        this.setState(() => ({ files: newFiles }));
+    }
+
+    handleRemoveFile(name) {
+        const { setSelectedFileValues, option } = this.props;
+        const { files } = this.state;
+
+        const newFiles = files.reduce(
+            (acc, file) => {
+                if (file.name !== name) {
+                    acc.push(file);
+                }
+
+                return acc;
+            }, []
+        );
+
+        setSelectedFileValues(newFiles, option);
+        this.setState(() => ({ files: newFiles }));
     }
 
     render() {

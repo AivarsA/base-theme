@@ -137,6 +137,7 @@ export const getExtensionAttributes = (product) => {
         configurableVariantIndex,
         customizableOptions: customizable_options,
         customizableOptionsMulti: customizable_options_multi,
+        customizableOptionsFiles: file_extension,
         variants,
         type_id
     } = product;
@@ -165,9 +166,9 @@ export const getExtensionAttributes = (product) => {
     }
 
     if (type_id === 'simple'
-        && (customizable_options || customizable_options_multi)
+        && (customizable_options || customizable_options_multi || file_extension)
     ) {
-        return { customizable_options, customizable_options_multi };
+        return { customizable_options, customizable_options_multi, file_extension };
     }
 
     return {};
