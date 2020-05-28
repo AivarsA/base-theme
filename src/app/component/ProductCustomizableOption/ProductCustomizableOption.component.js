@@ -13,7 +13,6 @@ import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import ExpandableContent from 'Component/ExpandableContent';
 import Field from 'Component/Field';
-import { attachmentIcon } from './ProductCustomizableOption.config';
 
 class ProductCustomizableOptions extends PureComponent {
     static propTypes = {
@@ -204,9 +203,13 @@ class ProductCustomizableOptions extends PureComponent {
         const { handleRemoveFile } = this.props;
 
         return (
-            <div key={ index }>
+            <div
+              block="ProductCustomizableOptions"
+              elem="Attachment"
+              key={ index }
+            >
                 <span
-                  block="MyAccountReturnDetailsChat"
+                  block="ProductCustomizableOptions"
                   elem="AttachmentName"
                 >
                     { name }
@@ -229,16 +232,10 @@ class ProductCustomizableOptions extends PureComponent {
 
         return (
             <div
-              block="MyAccountReturnDetailsChat"
+              block="ProductCustomizableOptions"
               elem="AttachmentWrapper"
             >
-                { attachmentIcon }
-                <div
-                  block="MyAccountReturnDetailsChat"
-                  elem="Attachment"
-                >
-                    { files.map((file, index) => this.renderAttachment(file.name, index)) }
-                </div>
+                { files.map((file, index) => this.renderAttachment(file.name, index)) }
             </div>
         );
     }

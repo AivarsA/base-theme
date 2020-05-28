@@ -67,6 +67,17 @@
         }
     }
 
+    &-Attachment {
+        margin-top: .5rem;
+
+        .MyAccountOverlay-CloseButton {
+            &::after,
+            &::before {
+                right: -10px;
+            }
+        }
+    }
+
     &_isPlaceholder {
         animation: var(--placeholder-animation);
         background-image: var(--placeholder-image);
