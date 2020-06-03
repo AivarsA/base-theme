@@ -35,7 +35,6 @@ class ProductCustomizableOptionContainer extends PureComponent {
         updateTextFieldValue: this.updateTextFieldValue.bind(this),
         setDropdownValue: this.setDropdownValue.bind(this),
         renderOptionLabel: this.renderOptionLabel.bind(this),
-        getHeading: this.getHeading.bind(this),
         handleAttachFile: this.onFileAttach.bind(this),
         handleRemoveFile: this.handleRemoveFile.bind(this)
     };
@@ -51,30 +50,11 @@ class ProductCustomizableOptionContainer extends PureComponent {
         fileFormRef: this.fileFormRef
     });
 
-
     getOptionType() {
         const { option } = this.props;
-        const {
-            checkboxValues,
-            dropdownValues,
-            fieldValues,
-            areaValues,
-            fileValues
-        } = option;
+        const { type } = option;
 
-        if (checkboxValues) {
-            return 'checkbox';
-        } if (dropdownValues) {
-            return 'dropdown';
-        } if (fieldValues) {
-            return 'field';
-        } if (areaValues) {
-            return 'area';
-        } if (fileValues) {
-            return 'file';
-        }
-
-        return null;
+        return type;
     }
 
     renderOptionLabel(priceType, price) {
@@ -112,25 +92,6 @@ class ProductCustomizableOptionContainer extends PureComponent {
             setSelectedDropdownValue(value, option);
             this.setState({ selectedDropdownValue: parseInt(value, 10) });
         }
-    }
-
-    getHeading(mainTitle, titleBold) {
-        return (
-            <>
-                <span
-                  block="ProductCustomizableOptions"
-                  elem="Heading"
-                >
-                    { `${ mainTitle } + ` }
-                </span>
-                <span
-                  block="ProductCustomizableOptions"
-                  elem="HeadingBold"
-                >
-                    { titleBold }
-                </span>
-            </>
-        );
     }
 
     getDropdownOptions(values) {

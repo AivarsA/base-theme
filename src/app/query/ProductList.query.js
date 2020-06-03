@@ -151,7 +151,6 @@ export class ProductListQuery {
             'special_to_date',
             this._getAttributesField(isVariant),
             this._getTierPricesField(),
-            this._getCustomizableProductFragment(),
             ...(!isVariant
                 ? [
                     'url_key',
@@ -176,6 +175,7 @@ export class ProductListQuery {
                     this._getMediaGalleryField(),
                     this._getSimpleProductFragment(),
                     this._getProductLinksField(),
+                    this._getCustomizableProductFragment(),
                     ...(!isVariant
                         ? [
                             this._getCategoriesField(),
@@ -660,7 +660,7 @@ export class ProductListQuery {
 
     _getCustomizableProductFragment() {
         return new Fragment('CustomizableProductInterface')
-            .addFieldList([this._getCustomizableProductFragmentOptionsField()])
+            .addFieldList([this._getCustomizableProductFragmentOptionsField()]);
     }
 
     _getSimpleProductFragmentFields() {

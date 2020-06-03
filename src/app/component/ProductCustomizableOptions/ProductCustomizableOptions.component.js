@@ -41,7 +41,7 @@ class ProductCustomizableOptions extends PureComponent {
             <ProductCustomizableOption
               option={ option }
               /* eslint-disable-next-line react/no-array-index-key */
-              key={ `option-${ key }` }
+              key={ key }
               setSelectedCheckboxValues={ setSelectedCheckboxValues }
               setCustomizableOptionTextFieldValue={ setCustomizableOptionTextFieldValue }
               setSelectedDropdownValue={ setSelectedDropdownValue }
